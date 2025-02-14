@@ -9,8 +9,6 @@ spec:
   interval: 1m0s
   ref:
     branch: main
-  secretRef:
-    name: flux-system
   url: https://github.com/Fma965/f9-k3s.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
