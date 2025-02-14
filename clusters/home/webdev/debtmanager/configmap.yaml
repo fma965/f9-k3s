@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: debtmanager-config
+  namespace: webdev
+  labels:
+    app: debtmanager
+data:
+  api.conf: |
+    server {
+        listen 81 default_server;
+        listen [::]:81 default_server;
+
+        server_name  _;
+
+        root "/app/api";
+        index index.php;
+
+        rewrite ^/public/(.*)$ /public.php?u=$1 last;
+        rewrite /webhook /webhook.php last;
+        rewrite ^/webhook/(.*)$ /webhook.php last;
+
+        include /opt/docker/etc/nginx/vhost.common.d/*.conf;
+    }
+  servers.conf: |
+    server {
+        listen 82 default_server;
+        listen [::]:82 default_server;
+
+        server_name  _;
+
+        root "/app/servers";
+        index index.php;
+
+        include /opt/docker/etc/nginx/vhost.common.d/*.conf;
+    }
+  10-php.conf: |
+    # Sets PHP upstream
+    upstream php {
+        server 127.0.0.1:9000;
+    }

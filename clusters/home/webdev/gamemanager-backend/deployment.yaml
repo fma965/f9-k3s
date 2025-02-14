@@ -1,0 +1,99 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gamesmanager-backend
+    app.kubernetes.io/instance: gamesmanager-backend
+    app.kubernetes.io/name: gamesmanager-backend
+  name: gamesmanager-backend
+  namespace: webdev
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: gamesmanager-backend
+  template:
+    metadata:
+      labels:
+        app: gamesmanager-backend
+        app.kubernetes.io/name: gamesmanager-backend
+    spec:
+      nodeSelector:
+        worker: "true"
+      containers:
+      - image: directus/directus:10
+        name: gamesmanager-backend
+        ports:
+        - containerPort: 8055
+          hostPort: 8055
+          protocol: TCP
+        envFrom:
+        - secretRef:
+            name: gamesmanager-secret
+        env:
+        - name: AUTH_AUTHENTIK_ALLOW_PUBLIC_REGISTRATION
+          value: "true"
+        - name: AUTH_AUTHENTIK_DRIVER
+          value: "openid"
+        - name: AUTH_AUTHENTIK_IDENTIFIER_KEY
+          value: "email"
+        - name: AUTH_AUTHENTIK_LABEL
+          value: "F9 Auth"
+        - name: AUTH_DISABLE_DEFAULT
+          value: "true"
+        - name: AUTH_PROVIDERS
+          value: "authentik"
+        - name: CACHE_AUTO_PURGE
+          value: "true"
+        - name: CACHE_ENABLED
+          value: "false"
+        - name: CACHE_STORE
+          value: "redis"
+        - name: DB_CLIENT
+          value: "mysql"
+        - name: DB_DATABASE
+          value: "games"
+        - name: DB_HOST
+          value: "mariadb.mariadb"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USER
+          value: "games"
+        - name: EMAIL_FROM
+          value: "gamemanager@f9.casa"
+        - name: EMAIL_SMTP_HOST
+          value: "192.168.1.1"
+        - name: EMAIL_SMTP_PORT
+          value: "25"
+        - name: EMAIL_TRANSPORT
+          value: "smtp"
+        - name: EXTENSIONS_PATH
+          value: "/directus/extensions"
+        - name: PORT
+          value: "8055"
+        - name: PUBLIC_URL
+          value: "https://gamesdb.f9.casa"
+        - name: REDIS_HOST
+          value: "redis.redis"
+        - name: REDIS_PORT
+          value: "6379"
+        volumeMounts:
+        - mountPath: "/directus/uploads"
+          readOnly: false
+          name: data
+          subPath: "uploads"
+        - mountPath: "/directus/database"
+          readOnly: false
+          name: data
+          subPath: "database"
+        - mountPath: "/directus/extensions"
+          readOnly: false
+          name: data
+          subPath: "extensions"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: gamesmanager-backend

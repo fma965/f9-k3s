@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: debtmanager
+    app.kubernetes.io/instance: debtmanager
+    app.kubernetes.io/name: debtmanager
+  name: debtmanager
+  namespace: webdev
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: debtmanager
+  template:
+    metadata:
+      labels:
+        app: debtmanager
+        app.kubernetes.io/name: debtmanager
+    spec:
+      nodeSelector:
+        worker: "true"
+      containers:
+      - image: webdevops/php-nginx:8.1
+        name: debtmanager
+        ports:
+        - containerPort: 81
+          hostPort: 81
+          protocol: TCP
+        - containerPort: 80
+          hostPort: 80
+          protocol: TCP
+        env:
+        - name: APPLICATION_PATH
+          value: /app
+        - name: PHP_DATE_TIMEZONE
+          value: Europe/London
+        - name: SERVICE_NGINX_CLIENT_MAX_BODY_SIZE
+          value: 50m
+        - name: TZ
+          value: Europe/London
+        - name: WEB_DOCUMENT_INDEX
+          value: index.php
+        - name: WEB_DOCUMENT_ROOT
+          value: /app/panel
+        volumeMounts:
+        - mountPath: "/app"
+          readOnly: false
+          name: data
+          subPath: "app"
+        - mountPath: "/opt/docker/etc/nginx/conf.d"
+          name: debtmanager-config
+        - mountPath: "/vendor"
+          readOnly: false
+          name: data
+          subPath: "vendor"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: debtmanager
+        - name: debtmanager-config
+          configMap:
+            name: debtmanager-config
