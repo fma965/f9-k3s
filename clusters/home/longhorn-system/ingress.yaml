@@ -12,8 +12,8 @@ spec:
     - match: Host(`longhorn.f9.casa`)
       kind: Rule
       middlewares:
-        # - name: authentik
-        #   namespace: authentik
+        - name: authentik
+          namespace: authentik
         - name: default-headers
           namespace: default
       services:
