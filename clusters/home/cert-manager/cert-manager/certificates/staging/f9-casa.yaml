@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: f9-casa
+  name: f9-casa-staging
   namespace: default
 spec:
   commonName: '*.f9.casa'
