@@ -14,8 +14,8 @@ spec:
       middlewares:
         - name: authentik
           namespace: authentik
-        - name: default-headers
-          namespace: default
+        # - name: default-headers
+        #   namespace: default
       services:
         - name: longhorn-frontend
           port: 80
