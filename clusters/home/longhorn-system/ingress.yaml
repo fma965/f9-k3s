@@ -19,5 +19,3 @@ spec:
       services:
         - name: longhorn-frontend
           port: 80
-  tls:
-    secretName: f9-casa-tls
