@@ -36,6 +36,8 @@ spec:
         env:
         - name: TZ
           value: Europe/London
+        - name: EXPERIMENTAL_CLIENT_FEATURE_FLAGS
+          value: ssh-key-vault-item,ssh-agent
         volumeMounts:
         - mountPath: "/data"
           readOnly: false
