@@ -3,10 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: gamesmanager-backend
-    app.kubernetes.io/instance: gamesmanager-backend
-    app.kubernetes.io/name: gamesmanager-backend
-  name: gamesmanager-backend
+    app: games-manager-frontend
+    app.kubernetes.io/instance: games-manager-frontend
+    app.kubernetes.io/name: games-manager-frontend
+  name: games-manager-frontend
   namespace: webdev
 spec:
   replicas: 1
@@ -14,25 +14,25 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: gamesmanager-backend
+      app: games-manager-frontend
   template:
     metadata:
       labels:
-        app: gamesmanager-backend
-        app.kubernetes.io/name: gamesmanager-backend
+        app: games-manager-frontend
+        app.kubernetes.io/name: games-manager-frontend
     spec:
       nodeSelector:
         worker: "true"
       containers:
       - image: directus/directus:10
-        name: gamesmanager-backend
+        name: games-manager-backend
         ports:
         - containerPort: 8055
           hostPort: 8055
           protocol: TCP
         envFrom:
         - secretRef:
-            name: gamesmanager-secret
+            name: games-manager-frontend-secret
         env:
         - name: AUTH_AUTHENTIK_ALLOW_PUBLIC_REGISTRATION
           value: "true"
@@ -96,4 +96,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: gamesmanager-backend
+            claimName: games-manager-frontend
