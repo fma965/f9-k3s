@@ -40,12 +40,5 @@ spec:
               value: "no"
             - name: TZ
               value: Europe/London
-          volumeMounts:
-            - mountPath: /bitnami/redis
-              name: data
       hostname: redis
       restartPolicy: Always
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: redis
